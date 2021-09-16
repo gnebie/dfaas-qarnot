@@ -1,0 +1,6 @@
+tmp*
+venv
+.ipynb_checkpoints
+picture.jpg
+video.mp4
+__pycache__/
