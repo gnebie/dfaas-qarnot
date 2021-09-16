@@ -1,20 +1,22 @@
 import qarnot
 
+import json
+
 class QarnotFaceswapWrapper:
     connect = None
 
     def test_values(self, values):
-        print(values)
+        print(json.dumps(values, sort_keys=False, indent=4))
+
+    def print_dump(self, value):
+        print(json.dumps(value, sort_keys=False, indent=4))
 
     def create_connection(self, info):
         if self.connect is None:
             self.connect = qarnot.connection.Connection(client_token=info["token"], cluster_url=info["cluster_url"])
 
     def start_info(self, values):
-        self.create_connection(values)
-        self.add_init_files(values)
-
-        return {"snap_period" : 180,
+        info = {"snap_period" : 180,
                 "docker_repo": "guillaumenebieqarnot/docker-hub-guillaume",
                 "docker_tag": "faceswap_docker_gpu.1.0",
                 "docker_cmd":"",
@@ -23,14 +25,27 @@ class QarnotFaceswapWrapper:
                 "task_name":"",
                 "profile":"docker-nvidia-bi-a6000-batch",
                 "instances":1,
-                "custer_url":"https://api.qarnot.com",
+                "cluster_url":"https://api.qarnot.com",
                 "token": values["pwd"],
                 "task_uuid":"",
                 }
+        self.create_connection(info)
+        # self.add_init_files(values)
+        return info
 
     def retrieve_bucket_files(self, name, values):
         info = self.start_info(values)
-        return self.connect.retrieve_or_create_bucket(name).list_files()
+        bucket = self.connect.retrieve_or_create_bucket(name)
+        list_file = bucket.list_files()
+        return list(set(map(lambda x : x.key, list_file)))
+
+    def upload_bucket_folder(self, name, directory, values):
+        info = self.start_info(values)
+        self.connect.retrieve_or_create_bucket(name).add_directory(directory)
+
+    def clean_bucket_folder(self, name, directory, values):
+        info = self.start_info(values)
+        bucket = self.connect.retrieve_or_create_bucket(name).delete()
 
     def retrieve_task(self, info):
         return self.connect.retrieve_task(info["task_uuid"])
