@@ -1,7 +1,10 @@
 import qarnot
 
-class QarotFaceswapWrapper:
+class QarnotFaceswapWrapper:
     connect = None
+
+    def test_values(self, values):
+        print(values)
 
     def create_connection(self, info):
         if self.connect is None:
