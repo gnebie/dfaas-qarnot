@@ -49,13 +49,17 @@ class QarnotFaceswapWrapper:
                 task.delete()
                 print("Task delete : " + values[value_name])
                 if "extract" in value_name:
-                    return self.extract(values)
-                if "train" in value_name:
-                    return self.train(values)
-                if "prepare" in value_name:
-                    return self.prepare(values)
-                if "convert" in value_name:
-                    return self.convert(values)
+                    task = self.extract(values)
+                elif "train" in value_name:
+                    task = self.train(values)
+                elif "prepare" in value_name:
+                    task = self.prepare(values)
+                elif "convert" in value_name:
+                    task = self.convert(values)
+                if task:
+                    print("Task launched!")
+                    print("Status : " + task.state)
+                    print("Uuid: " + task.uuid)
 
     def remove_task(self, value_name, values, output):
         with output:
