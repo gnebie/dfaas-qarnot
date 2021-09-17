@@ -14,10 +14,10 @@ class QarnotFaceswapWrapper:
 
 
     def print_bucket_dump(self, value_name, values, output):
-        bucket_files = self.retrieve_bucket_files(values[value_name], values)
-        if bucket_files:
-            with output:
-                clear_output()
+        with output:
+            clear_output()
+            bucket_files = self.retrieve_bucket_files(values[value_name], values)
+            if bucket_files:
                 print(json.dumps(bucket_files, sort_keys=False, indent=4))
 
     def print_task_dump(self, value_name, values, output):
