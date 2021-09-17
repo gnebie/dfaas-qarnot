@@ -33,8 +33,42 @@ class QarnotFaceswapWrapper:
                 print("Name :" + values[value_name])
                 print("Status :" + task.state)
                 print("Creation time :" + str(task.creation_date))
-                print("Execution time :" + str(task.execution_time))
-                print("Execution time :" + str(task.execution_time))
+                print("Execution time :" + str(task.status.execution_time))
+                #print("Execution time :" + str(task.execution_time))
+
+    def restart_task(self, value_name, values, output):
+        with output:
+            clear_output()
+            try:
+                task = self.retrieve_task_by_name(values[value_name], values)
+            except Exception as ex:
+                print("Error found:")
+                print(ex)
+                return
+            if task:
+                task.delete()
+                print("Task delete : " + values[value_name])
+                if "extract" in value_name:
+                    return self.extract(values)
+                if "train" in value_name:
+                    return self.train(values)
+                if "prepare" in value_name:
+                    return self.prepare(values)
+                if "convert" in value_name:
+                    return self.convert(values)
+
+    def remove_task(self, value_name, values, output):
+        with output:
+            clear_output()
+            try:
+                task = self.retrieve_task_by_name(values[value_name], values)
+            except Exception as ex:
+                print("Error found:")
+                print(ex)
+                return
+            if task:
+                task.delete()
+                print("Task delete : " + values[value_name])
 
     """
     def tasks_page_filter_name(name):
@@ -117,48 +151,73 @@ class QarnotFaceswapWrapper:
             bucket_init.add_directory(values["convert-folder-a"])
 
     def extract(self, values):
+        task_name = values["extract-task"]
         info = self.start_info(values)
         if not info:
             return None
-        if self.retrieve_task_by_name(values["extract-task"], values):
-            print("Task already created")
+        try:
+            self.retrieve_task_by_name(task_name, values)
+            print("Task " + task_name + " already created")
             return None
+        except Exception:
+            pass
         info["docker_cmd"] = "extract.sh"
-        info["task_name"] = values["extract-task"]
+        info["task_name"] = task_name
         resources_names = [values["init-bucket"]]
         info["resources"] = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
         info["result"] = self.connect.retrieve_or_create_bucket(values["extract-bucket"])
         return self.launch_task(info)
 
     def train(self, values):
+        task_name = values["train-task"]
         info = self.start_info(values)
         if not info:
             return None
+        try:
+            self.retrieve_task_by_name(task_name, values)
+            print("Task " + task_name + " already created")
+            return None
+        except Exception:
+            pass
         info["docker_cmd"] = "train.sh"
-        info["task_name"] = values["train-task"]
+        info["task_name"] = task_name
         resources_names = [values["init-bucket"], values["extract-bucket"]]
-        info.resources = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
-        info.result = self.connect.retrieve_or_create_bucket(values["train-bucket"])
+        info["resources"] = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
+        info["result"] = self.connect.retrieve_or_create_bucket(values["train-bucket"])
         return self.launch_task(info)
 
     def prepare_convertion(self, values):
+        task_name = values["prepare-task-task"]
         info = self.start_info(values)
         if not info:
             return None
+        try:
+            self.retrieve_task_by_name(task_name, values)
+            print("Task " + task_name + " already created")
+            return None
+        except Exception:
+            pass
         info["docker_cmd"] = "prepare_convert.sh"
-        info["task_name"] = values["prepare-task-convert"]
+        info["task_name"] = task_name
         resources_names = [values["init-bucket"]]
-        info.resources = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
-        info.result = self.connect.retrieve_or_create_bucket(values["prepare-bucket"])
+        info["resources"] = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
+        info["result"] = self.connect.retrieve_or_create_bucket(values["prepare-bucket"])
         return self.launch_task(info)
 
     def convert(self, values):
+        task_name = values["convert-task"]
         info = self.start_info(values)
         if not info:
             return None
+        try:
+            self.retrieve_task_by_name(task_name, values)
+            print("Task " + task_name + " already created")
+            return None
+        except Exception:
+            pass
         info["docker_cmd"] = "convert.sh"
-        info["task_name"] = values["convert-task"]
+        info["task_name"] = task_name
         resources_names = [values["init-bucket"], values["train-bucket"], values["prepare-bucket"]]
-        info.resources = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
-        info.result = self.connect.retrieve_or_create_bucket(values[""])
+        info["resources"] = [ self.connect.retrieve_or_create_bucket(bucket_name) for bucket_name in resources_names ]
+        info["result"] = self.connect.retrieve_or_create_bucket(values[""])
         return self.launch_task(info)
