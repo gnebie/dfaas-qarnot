@@ -10,7 +10,7 @@ This is an MVP for running Simswap, a DeepFake framework, on Qarnot through a ju
 
 
 Binder :   
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gnebie/dfaas-qarnot/simswap)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gnebie/dfaas-qarnot/simswap?urlpath=%2Ftree%2Fsimswap.ipynb)
 
 
 ### Content :
