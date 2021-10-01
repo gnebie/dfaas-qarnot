@@ -28,8 +28,8 @@ This project is for technical and academic use only. Please do not apply it to i
 
 ### Run Requirements:
 
-* Your *Qarnot Token*
-* A picture of face of the people you want to add
+* Your *Qarnot Token* (You can find it [here](https://account.qarnot.com/))
+* A picture of the people face you want to add to the video. 
 * The video with the face to be changed
 
 ![](simswap_images/simswap-info.png)
